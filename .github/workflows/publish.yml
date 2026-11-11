@@ -24,7 +24,7 @@ jobs:
           cache-to: type=gha,mode=max
       - name: Check startup, queries and notebooks
         run: |
-          docker run -d --name sqltrainee-test sqltrainee:test
+          docker run -d --name sqltrainee-test -v sqltrainee-test-data:/var/lib/sqltrainee sqltrainee:test
           for i in $(seq 1 60); do
             state=$(docker inspect -f '{{.State.Health.Status}}' sqltrainee-test)
             [ "$state" = healthy ] && break
@@ -32,6 +32,16 @@ jobs:
           done
           test "$(docker inspect -f '{{.State.Health.Status}}' sqltrainee-test)" = healthy
           docker exec sqltrainee-test python /opt/sqltrainee/docker/runtime.py test
+          docker exec --user learner sqltrainee-test sh -c 'echo persistence > /var/lib/sqltrainee/work/answers/probe.txt'
+          docker stop -t 30 sqltrainee-test
+          docker rm sqltrainee-test
+          docker run -d --name sqltrainee-test -v sqltrainee-test-data:/var/lib/sqltrainee sqltrainee:test
+          for i in $(seq 1 60); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' sqltrainee-test)" = healthy ] && break
+            sleep 3
+          done
+          test "$(docker inspect -f '{{.State.Health.Status}}' sqltrainee-test)" = healthy
+          test "$(docker exec sqltrainee-test cat /var/lib/sqltrainee/work/answers/probe.txt)" = persistence
       - name: Container logs
         if: failure()
         run: docker logs sqltrainee-test

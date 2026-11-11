@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 import nbformat
 from nbclient import NotebookClient
 from jupyter_client import KernelManager
@@ -7,7 +8,7 @@ for name in ['training.ipynb','exam.ipynb']:
     nb=nbformat.read(root/name,as_version=4)
     nbformat.validate(nb)
     km=KernelManager(kernel_name='python3')
-    km.kernel_spec.argv=[str(root/'.venv/bin/python'),'-m','ipykernel_launcher','-f','{connection_file}']
+    km.kernel_spec.argv=[sys.executable,'-m','ipykernel_launcher','-f','{connection_file}']
     client=NotebookClient(nb,km=km,timeout=30,resources={'metadata':{'path':str(root)}},allow_errors=False)
     try:
         client.execute()

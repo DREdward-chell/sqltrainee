@@ -187,8 +187,8 @@ def main():
         keys = credentials()
         env = learner_environment(keys)
         env['SQLTRAINER_ADMIN_PASSWORD'] = keys['admin']
-        run(['python', 'tests/selftest.py'], cwd=WORK, env=env)
-        run(['python', '/opt/sqltrainee/docker/notebook_test.py'], cwd=WORK, env=env)
+        run(['gosu', 'learner', 'python', 'tests/selftest.py'], cwd=WORK, env=env)
+        run(['gosu', 'learner', 'python', '/opt/sqltrainee/docker/notebook_test.py'], cwd=WORK, env=env)
     else:
         raise SystemExit('Commands: serve, health, url, test, reset-db --yes')
 
