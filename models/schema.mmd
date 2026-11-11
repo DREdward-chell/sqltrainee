@@ -1,0 +1,47 @@
+erDiagram
+    USERS ||--o| CUSTOMERS : "роль заказчика"
+    USERS ||--o| FREELANCERS : "роль фрилансера"
+    CUSTOMERS ||--o{ PROJECTS : "публикует"
+    PROJECTS ||--o{ BIDS : "получает"
+    FREELANCERS ||--o{ BIDS : "подает"
+    PROJECTS ||--o| REVIEWS : "имеет после завершения"
+    USERS {
+        bigint id PK
+        text name
+        timestamp registered_at
+    }
+    CUSTOMERS {
+        bigint user_id PK,FK
+    }
+    FREELANCERS {
+        bigint user_id PK,FK
+        text specialization
+        numeric hourly_rate
+    }
+    PROJECTS {
+        bigint id PK
+        bigint customer_id FK
+        text title
+        text description
+        numeric budget
+        text status
+        timestamp created_at
+        timestamp completed_at
+    }
+    BIDS {
+        bigint id PK
+        bigint project_id FK
+        bigint freelancer_id FK
+        numeric amount
+        date proposed_completion_date
+        text status
+        timestamp submitted_at
+        timestamp accepted_at
+        timestamp rejected_at
+    }
+    REVIEWS {
+        bigint project_id PK,FK
+        smallint rating
+        text comment
+        timestamp created_at
+    }

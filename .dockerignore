@@ -1,0 +1,12 @@
+.git
+.venv
+.idea
+.backups
+__pycache__
+**/__pycache__
+*.pyc
+data/*
+progress.json
+.env
+*.tar
+*.zip
